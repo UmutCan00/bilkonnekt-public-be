@@ -89,7 +89,7 @@ async function login(req, res){
   await user.save()
 
   res.cookie('refresh_token', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000})
-  res.json({access_token: accessToken})
+  res.json({token: user, accessToken:accessToken})
 }
 
 async function logout(req, res){
