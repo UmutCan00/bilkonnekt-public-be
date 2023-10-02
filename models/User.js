@@ -24,11 +24,6 @@ const UserSchema = Schema(
       required: true,
       min: 6
     },
-    role: {
-      type: String,
-      required: false,
-      default: "writer",
-    },
     refresh_token: String
   },
   {

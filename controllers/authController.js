@@ -16,6 +16,7 @@ async function prereg(req,res){
   if(verifications.length > 0){
     await VerificationObject.deleteMany({ user_email: user_email }).exec();
   }
+  console.log("deneme")
   await VerificationObject.create({user_email,verificationcode})
   await sendEmail(user_email, 'Bilkent Forum Project Verification Code', ("Your verification code is "+verificationcode+" ."))
   return res.status(200).json({'message': verificationcode+","+user_email})

@@ -43,7 +43,7 @@ app.use(errorHandlerMiddleware)
 
 // Routes
 app.use('/api/auth', require('./routes/api/auth'))
-
+app.use('/api/lostandfound', require('./routes/api/lostandfound'))
 
 app.all('*', (req, res) => {
   res.status(404)
