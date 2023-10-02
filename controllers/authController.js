@@ -16,6 +16,7 @@ async function prereg(req,res){
   if(verifications.length > 0){
     await VerificationObject.deleteMany({ user_email: user_email }).exec();
   }
+  console.log("deneme")
   await VerificationObject.create({user_email,verificationcode})
   await sendEmail(user_email, 'Bilkent Forum Project Verification Code', ("Your verification code is "+verificationcode+" ."))
   return res.status(200).json({'message': verificationcode+","+user_email})
@@ -89,7 +90,7 @@ async function login(req, res){
   await user.save()
 
   res.cookie('refresh_token', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000})
-  res.json({access_token: accessToken})
+  res.json({user: user, backendTokens:{accessToken:accessToken, refreshToken:user.refresh_token}})
 }
 
 async function logout(req, res){
