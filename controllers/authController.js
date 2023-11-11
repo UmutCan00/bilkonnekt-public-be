@@ -174,4 +174,8 @@ async function sendEmail(to, subject, text) {
   }
 }
 
-module.exports = {register, login, logout, refresh, user, prereg}
+async function getProfile(req, res) {
+  const user = req.user;
+  res.json({username: user.username, email:user.email})
+}
+module.exports = {register, login, logout, refresh, user, prereg, getProfile}
