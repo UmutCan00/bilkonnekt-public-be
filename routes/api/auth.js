@@ -16,4 +16,5 @@ router.get('/user', authMiddleware, authControllers.user)
 
 router.post('/prereg', authControllers.prereg)
 
+router.get('/getProfile', authMiddleware, authControllers.getProfile)
 module.exports = router
