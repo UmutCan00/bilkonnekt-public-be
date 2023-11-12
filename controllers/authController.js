@@ -182,4 +182,18 @@ async function getProfile(req, res) {
   if(!user)return res.status(422).json({'message': 'kullanici yok'})
   res.json({username: user.username, email:user.email})
 }
-module.exports = {register, login, logout, refresh, user, prereg, getProfile}
+
+
+async function deleteUser(req, res) {
+  const {id} = req.body
+  if(!id) return res.status(422).json({'message': 'id göndermedin'})
+  console.log("id: ", id)
+  const user = await User.findOne({_id:id}).exec()
+  if(!user)return res.status(422).json({'message': 'kullanici yok'})
+  
+  const deleteduser = await User.findOneAndDelete({ _id: id }).exec();
+  res.json({'message': 'kullanici silindi'})
+}
+
+
+module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser}
