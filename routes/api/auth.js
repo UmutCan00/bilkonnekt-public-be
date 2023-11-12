@@ -20,4 +20,6 @@ router.post('/getProfile', authMiddleware, authControllers.getProfile)
 
 router.post('/deleteUser', authMiddleware, authControllers.deleteUser)
 
+router.post('/changePassword', authMiddleware, authControllers.changePassword)
+
 module.exports = router

@@ -195,5 +195,20 @@ async function deleteUser(req, res) {
   res.json({'message': 'kullanici silindi'})
 }
 
+async function changePassword(req, res) {
+  const {oldPass, newPass, id} = req.body
+  if(!oldPass || !newPass || !id) return res.status(422).json({'message': 'input göndermedin'})
+  const user = await User.findOne({_id:id}).exec()
+  if(!user)return res.status(422).json({'message': 'kullanici yok'})
+  const match = await bcrypt.compare(oldPass, user.password)
+  if(!match) return res.status(401).json({message: "Email or password is incorrect"})
 
-module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser}
+  hashedPassword = await bcrypt.hash(newPass, 10)
+
+  user.password = hashedPassword;
+  await user.save();
+
+  return res.sendStatus(201)
+}
+
+module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword}
