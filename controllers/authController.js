@@ -72,7 +72,7 @@ async function login(req, res){
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: '1800s'
+      expiresIn: '14d'
     }
   )
 
@@ -82,7 +82,7 @@ async function login(req, res){
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: '1d'
+      expiresIn: '100d'
     }
   )
 
