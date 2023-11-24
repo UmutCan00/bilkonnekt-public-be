@@ -16,4 +16,14 @@ async function createProduct(req, res){
       }
 }
 
-module.exports = {createProduct}
+async function getProducts(req,res){
+  try {
+    results= await Product.find().sort({ date: -1 });
+    console.log(results);
+    return res.status(201).json(results)
+  } catch (error) {
+    console.log("basarisiz");
+    return res.status(400).json({message: "Could not get product items"})
+  }
+}
+module.exports = {createProduct, getProducts}
