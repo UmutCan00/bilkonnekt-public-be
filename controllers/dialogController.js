@@ -21,7 +21,7 @@ async function createDialog(req,res){
 async function getDialogMessage(req,res){
     const {dialogId} = req.body;
     try {
-        results= await Message.find({dialogId:dialogId}).sort({ date: -1 });
+        results= await Message.find({dialogId:dialogId}).sort({ date: 1 });
         console.log(results);
         return res.status(201).json(results)
     } catch (error) {
