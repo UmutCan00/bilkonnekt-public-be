@@ -6,6 +6,8 @@ const authMiddleware = require('../../middleware/auth')
 
 router.post('/createSocialPost', authMiddleware, socialControllers.createSocialPost)
 
-router.get('/getSocialPosts', authMiddleware, socialControllers.getSocialPosts)
+router.get('/getSocialPosts', socialControllers.getSocialPosts)
+
+router.post('/getSingleSocialPost', socialControllers.getSingleSocialPost)
 
 module.exports = router
