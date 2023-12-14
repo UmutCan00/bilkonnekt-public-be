@@ -2,18 +2,18 @@ const Product = require('../models/Product')
 
 
 async function createProduct(req, res){
-    const {title, price, address, type, description, imageURL} = req.body
-    const user = req.user;
-    if( !title || !price || !address || !type || !description || !imageURL) {
-        return res.status(422).json({'message': 'Invalid fields'})
-    }
+  const {title, price, address, type, description, imageURL} = req.body
+  const user = req.user;
+  if( !title || !price || !address || !type || !description || !imageURL) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
 
-    try {
-        await Product.create({sellerid: user.id, title, price, address, type, description, imageURL})
-        return res.status(201).json({message: "Succesfully created new product, basarili"})
-      } catch (error) {
-        return res.status(400).json({message: "Could not create new product, basarisiz"})
-      }
+  try {
+      await Product.create({sellerid: user.id, title, price, address, type, description, imageURL})
+      return res.status(201).json({message: "Succesfully created new product, basarili"})
+    } catch (error) {
+      return res.status(400).json({message: "Could not create new product, basarisiz"})
+    }
 }
 
 async function getProducts(req,res){

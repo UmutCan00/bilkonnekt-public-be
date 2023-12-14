@@ -48,6 +48,8 @@ app.use('/api/lostandfound', require('./routes/api/lostandfound'))
 app.use('/api/product', require('./routes/api/productRoute'))
 app.use('/api/message', require('./routes/api/message'))
 app.use('/api/dialog', require('./routes/api/dialog'))
+app.use('/api/group', require('./routes/api/studyGroup'))
+
 
 app.all('*', (req, res) => {
   res.status(404)
