@@ -39,4 +39,49 @@ async function getProductsByUserId(req,res){
   }
 }
 
-module.exports = {createProduct, getProducts, getProductsByUserId}
+async function deleteProduct(req,res){
+  const {productId} = req.body
+  const userId = req.user.id;
+  if( !productId || !userId) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+
+  try {
+      const item = await Product.findOne({_id: productId})
+      if(!item){
+        return res.status(404).json({'message': 'Product not found'})
+      }
+      if(item.sellerid != userId){
+        return res.status(400).json({'message': 'You are not allowed to do this operation'})
+      }
+
+      await item.deleteOne();
+      
+      return res.status(201).json({message: "Succesfully deleted the product, basarili"})
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({message: "Could not deleted the product, basarisiz"})
+    }
+}
+
+async function getSingleProductById(req,res){
+  const {productId} = req.body
+  const userId = req.user.id;
+  if( !productId || !userId) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+
+  try {
+      const item = await Product.findOne({_id: productId})
+      if(!item){
+        return res.status(404).json({'message': 'Product not found'})
+      }
+      
+      return res.status(201).json(item)
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({message: "Could not fetch the product, basarisiz"})
+    }
+}
+
+module.exports = {createProduct, getProducts, getProductsByUserId, deleteProduct, getSingleProductById}

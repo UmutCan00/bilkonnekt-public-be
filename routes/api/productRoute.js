@@ -8,4 +8,8 @@ router.post('/createProduct', authMiddleware, Product.createProduct) // real cre
 router.get('/getProducts', Product.getProducts) // for dev purposes
 router.get('/getProductsByUserId', Product.getProductsByUserId) // for dev purposes
 
+router.post('/deleteProduct', authMiddleware, Product.deleteProduct) 
+
+router.post('/getSingleProductById', Product.getSingleProductById)
+
 module.exports = router
