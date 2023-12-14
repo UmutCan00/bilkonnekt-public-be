@@ -31,9 +31,9 @@ async function getSocialPosts(req, res){
 
 async function getSingleSocialPost(req, res){
   const {postID} = req.body;
-  const user = req.user;
-  const publisherId=user.id;
-  if( !postID || !publisherId) {
+  //const user = req.user;
+  //const publisherId=user.id;
+  if( !postID ) {
       return res.status(422).json({'message': 'Invalid fields'})
   }
   try {
