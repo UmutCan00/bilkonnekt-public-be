@@ -43,11 +43,11 @@ app.use(errorHandlerMiddleware)
 
 // Routes
 app.use('/api/auth', require('./routes/api/auth'))
+app.use('/api/social', require('./routes/api/socialRouter'))
 app.use('/api/lostandfound', require('./routes/api/lostandfound'))
 app.use('/api/product', require('./routes/api/productRoute'))
 app.use('/api/message', require('./routes/api/message'))
 app.use('/api/dialog', require('./routes/api/dialog'))
-
 
 app.all('*', (req, res) => {
   res.status(404)
