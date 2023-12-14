@@ -10,4 +10,10 @@ router.get('/getSocialPosts', socialControllers.getSocialPosts)
 
 router.post('/getSingleSocialPost', socialControllers.getSingleSocialPost)
 
+router.post('/createComment', socialControllers.createComment)
+
+router.post('/getPostComments', socialControllers.getPostComments)
+
+router.post('/updateComment', socialControllers.updateComment)
+
 module.exports = router
