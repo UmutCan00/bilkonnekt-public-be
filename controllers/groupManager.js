@@ -52,7 +52,7 @@ async function joinStudyGroup(req, res){
     }
 
     try {
-        const groupResults = await GroupParticipation.findOne({ studentId: userId });
+        const groupResults = await GroupParticipation.findOne({ studentId: userId, groupId:groupId });
         console.log("groupResults: ",groupResults);
         if(groupResults != null){
             return res.status(403).json({message: "You are already in the group, ses deneme"})
@@ -149,21 +149,87 @@ async function applyToStudyGroup(req, res){
         return res.status(400).json({message: "Could not create group applciation, basarisiz"})
     }
 }
-async function assignGroupTask(req, res){
 
+async function assignGroupTask(req, res){
+    const {groupId, description, assignedId} = req.body
+    const user = req.user;
+    const leaderId = user.id
+    if( !groupId || !description || !leaderId || !assignedId) {
+        return res.status(422).json({'message': 'Invalid fields'})
+    }
+
+    try {
+        const currentuser= await GroupParticipation.findOne({studentId: leaderId, groupId: groupId,role:"leader"});
+        if(!currentuser){
+            return res.status(422).json({'message': 'You are not leader'})
+        }
+        await GroupTask.create({groupId, description, studentId: assignedId})
+        return res.status(201).json({message: "Succesfully created new group task, basarili"})
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message: "Could not create new group task, basarisiz"})
+    }
 }
 async function seeGroupTasks(req, res){
+    const {groupId} = req.body
+    const user = req.user;
+    const userId = user.id
+    if( !groupId || !userId) {
+        return res.status(422).json({'message': 'Invalid fields'})
+    }
 
+    try {
+        const currenttasks= await GroupTask.find({ groupId: groupId, isFinished:false});
+        return res.status(201).json(currenttasks)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message: "Could not create new group task, basarisiz"})
+    }
 }
 async function completeGroupTask(req, res){
+    const {taskId} = req.body
+    const user = req.user;
+    const userId = user.id
+    if( !taskId || !userId) {
+        return res.status(422).json({'message': 'Invalid fields'})
+    }
 
+    try {
+        const currenttask= await GroupTask.findOne({ _id: taskId});
+        if(taskId != currenttask.id){
+            return res.status(422).json({'message': 'This task is not assigned to you'})
+        }
+        console.log(currenttask)
+        await GroupTask.findOneAndUpdate(
+            { _id: taskId},
+            { $set: { isFinished: true } }
+        );
+        return res.status(201).json({message: "task completed success"})
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message: "task completed fail"})
+    }
 }
 async function leaveStudyGroup(req, res){
-
+    const {groupId } = req.body
+    const user = req.user;
+    const userId = user.id
+    if( !groupId || !userId ) {
+        return res.status(422).json({'message': 'Invalid fields'})
+    }
+    try {
+        const groupResults = await GroupParticipation.findOne({ studentId: userId, groupId:groupId });
+        console.log("groupResults: ",groupResults);
+        if(!groupResults){
+            return res.status(403).json({message: "You are not in the group, ses deneme"})
+        }
+        await GroupParticipation.findOneAndRemove({groupId:groupId,studentId: userId});
+        return res.status(201).json({message: "Succesfully leaved group, basarili"})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({message: "Could not leaved group, basarisiz"})
+    } 
 }
-async function deleteStudyGroup(req, res){
 
-}
 module.exports = {createStudyGroup,seeUserGroups,joinStudyGroup,seeGroupParticipants,promoteToLeader
-    , kickParticipant, applyToStudyGroup, assignGroupTask, seeGroupTasks, completeGroupTask, leaveStudyGroup,
-    deleteStudyGroup}
+    , kickParticipant, applyToStudyGroup, assignGroupTask, seeGroupTasks, completeGroupTask, leaveStudyGroup}
