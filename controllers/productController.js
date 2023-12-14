@@ -26,4 +26,17 @@ async function getProducts(req,res){
     return res.status(400).json({message: "Could not get product items"})
   }
 }
-module.exports = {createProduct, getProducts}
+
+async function getProductsByUserId(req,res){
+  try {
+    console.log(req)
+    results= await Product.find({sellerid: req.query.userId}).sort({ date: -1 });
+    console.log(results);
+    return res.status(201).json(results)
+  } catch (error) {
+    console.log("basarisiz");
+    return res.status(400).json({message: "Could not get product items by user id"})
+  }
+}
+
+module.exports = {createProduct, getProducts, getProductsByUserId}
