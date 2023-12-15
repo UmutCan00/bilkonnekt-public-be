@@ -73,12 +73,23 @@ async function seeGroupParticipants(req, res){
     }
 
     try {
-        participationResults= await GroupParticipation.find({groupId: groupId}).sort({ date: -1 });
+        const participationResults= await GroupParticipation.find({groupId: groupId}).sort({ date: -1 });
         const studentIds = participationResults.map(result => result.studentId);
         console.log('Group IDs:', studentIds);
         const userResults = await User.find({ _id: { $in: studentIds } });
-        console.log('User Results:', userResults);
-        return res.status(201).json(userResults)
+        const resultsWithRoles = participationResults.map(participation => {
+            const userResult = userResults.find(user => user._id.equals(participation.studentId));
+
+            if (userResult) {
+                return {
+                    userId: userResult._id,
+                    name: userResult.username,
+                    email: userResult.email,
+                    role: participation.role 
+                };
+            }
+        });
+        return res.status(201).json(resultsWithRoles.filter(result => result)); 
     } catch (error) {
         console.log("basarisiz", error);
         return res.status(400).json({message: "Could not get see Users in the group"})
