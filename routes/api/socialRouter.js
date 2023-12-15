@@ -20,4 +20,8 @@ router.post('/likePost', socialControllers.likePost)
 
 router.post('/createClubPost', socialControllers.createClubPost)
 
+router.post('/createClub', socialControllers.createClub)
+
+router.post('/followClub', socialControllers.followClub)
+
 module.exports = router

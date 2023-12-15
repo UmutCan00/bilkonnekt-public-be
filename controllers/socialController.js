@@ -2,6 +2,8 @@ const SocialPost = require('../models/socialModels/SocialPost')
 const Comment = require('../models/socialModels/Comment')
 const Like = require('../models/socialModels/Like')
 const ClubPost = require('../models/socialModels/ClubPost')
+const Club = require('../models/socialModels/Club')
+const Follower = require('../models/socialModels/Follower')
 
 
 async function createSocialPost(req, res){
@@ -162,6 +164,43 @@ async function createClubPost(req, res){
     }
 }
 
+async function createClub(req, res){
+  const {name, imageURL, executiveId} = req.body;
+  console.log("imageURL: ", imageURL)
+  const user = req.user;
+  const adminId=user.id; // needs an admin check 
+  if( !name || !imageURL || !executiveId) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+
+  try {
+      const currentClub = await Club.create({name, executiveId, imageURL})
+      await Follower.create({studentId:executiveId,clubId:currentClub.id, role:"leader"})
+      return res.status(201).json({message: "Succesfully created new club, basarili"})
+    } catch (error) {
+      return res.status(400).json({message: "Could not create new club, basarisiz"})
+    }
+}
+
+async function followClub(req,res){
+  const {clubId} = req.body;
+  const userId = req.user.id;
+  
+  if( !userId || !clubId) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+
+  try {
+      const isAlreadyFollows = await Follower.findOne({studentId:userId,clubId:clubId})
+      if(isAlreadyFollows){
+        return res.status(403).json({'message': 'you already follow the club'})
+      }
+      await Follower.create({studentId:userId,clubId:clubId})
+      return res.status(201).json({message: "Succesfully created new club follower, basarili"})
+  } catch (error) {
+      return res.status(400).json({message: "Could not create new club follower, basarisiz"})
+  }
+}
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
-  getPostComments, updateComment, likePost, createClubPost
+  getPostComments, updateComment, likePost, createClubPost, createClub, followClub
 }
