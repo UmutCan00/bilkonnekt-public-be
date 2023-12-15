@@ -201,6 +201,17 @@ async function followClub(req,res){
       return res.status(400).json({message: "Could not create new club follower, basarisiz"})
   }
 }
+
+async function getClubs(req,res){
+  try {
+    const allClubs = await Club.find({})
+    return res.status(201).json(allClubs)
+} catch (error) {
+    return res.status(400).json({message: "Could not fetch all clubs follower, basarisiz"})
+}
+
+}
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
-  getPostComments, updateComment, likePost, createClubPost, createClub, followClub
+  getPostComments, updateComment, likePost, createClubPost, createClub, followClub,
+  getClubs
 }
