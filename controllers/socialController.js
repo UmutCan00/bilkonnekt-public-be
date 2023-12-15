@@ -1,6 +1,6 @@
 const SocialPost = require('../models/socialModels/SocialPost')
 const Comment = require('../models/socialModels/Comment')
-
+const Like = require('../models/socialModels/Like')
 
 async function createSocialPost(req, res){
     const {title, content, imageURL} = req.body;
@@ -99,6 +99,49 @@ async function updateComment(req, res){
     return res.status(400).json({message: "Could not create new social comment, basarisiz"})
   }
 }
+
+async function likePost(req,res){
+  const {postId} = req.body;
+  const userId = req.user.id;
+  if( !postId || !userId) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    const currentPost= await SocialPost.findOne({_id:postId});
+    if(!currentPost){
+      return res.status(404).json({'message': 'Post not found'})
+    }
+    const isCreated= await Like.findOne({postId:postId, userId:userId});
+    if(!isCreated){
+      await Like.create({postId, userId});
+      
+      currentPost.likeCount = currentPost.likeCount + 1;
+      await currentPost.save();
+      return res.status(200).json({message: "Like created"})
+    }else{
+      if(isCreated.isActive){
+        await Like.findOneAndUpdate(
+          { _id: isCreated.id},
+          { $set: { isActive: false } }
+        );
+        currentPost.likeCount = currentPost.likeCount - 1;
+        await currentPost.save();
+        return res.status(200).json({message: "Like deactivated"})
+      }else{
+        await Like.findOneAndUpdate(
+          { _id: isCreated.id},
+          { $set: { isActive: true } }
+        );
+        currentPost.likeCount = currentPost.likeCount + 1;
+        await currentPost.save();
+        return res.status(200).json({message: "Like activated"})
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({message: "Could not like the post, basarisiz"})
+  }
+}
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
-  getPostComments, updateComment
+  getPostComments, updateComment, likePost
 }

@@ -16,4 +16,5 @@ router.post('/getPostComments', socialControllers.getPostComments)
 
 router.post('/updateComment', socialControllers.updateComment)
 
+router.post('/likePost', socialControllers.likePost)
 module.exports = router

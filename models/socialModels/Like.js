@@ -1,34 +1,20 @@
 const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
-const Post = Schema(
+const Like = Schema(
     {
-        title:{
+        postId:{
             type: String,
             required: true
         },
-        publisherId:{
+        userId:{
             type: String,
             required: true
         },
-        content:{
-            type: String,
-            required: true
-        },
-        imageURL:{
-            type: String,
+        isActive:{
+            type: Boolean,
             required: false,
-            default: "none",
-        },
-        likeCount:{
-            type: Number,
-            required: false,
-            default: 0,
-        },
-        commentCount:{
-            type: Number,
-            required: false,
-            default: 0,
+            default: true,
         },
         date:{
             type: Date, 
@@ -47,4 +33,4 @@ const Post = Schema(
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
     },
 )
-module.exports = mongoose.model('Post', Post)
+module.exports = mongoose.model('Like', Like)
