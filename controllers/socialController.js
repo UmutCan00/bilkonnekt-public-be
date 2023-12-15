@@ -11,12 +11,13 @@ async function createSocialPost(req, res){
     console.log("imageURL: ", imageURL)
     const user = req.user;
     const publisherId=user.id;
-    if( !title || !content || !imageURL || !publisherId) {
+    const publisherName = user.username;
+    if( !title || !content || !imageURL || !publisherId|| !publisherName) {
         return res.status(422).json({'message': 'Invalid fields'})
     }
 
     try {
-        await SocialPost.create({title, content, imageURL, publisherId})
+        await SocialPost.create({title, content, imageURL, publisherId, publisherName})
         return res.status(201).json({message: "Succesfully created new social post, basarili"})
       } catch (error) {
         return res.status(400).json({message: "Could not create new social post, basarisiz"})
@@ -165,16 +166,16 @@ async function createClubPost(req, res){
 }
 
 async function createClub(req, res){
-  const {name, imageURL, executiveId} = req.body;
+  const {name, imageURL, executiveId, description} = req.body;
   console.log("imageURL: ", imageURL)
   const user = req.user;
   const adminId=user.id; // needs an admin check 
-  if( !name || !imageURL || !executiveId) {
+  if( !name || !imageURL || !executiveId || !description) {
       return res.status(422).json({'message': 'Invalid fields'})
   }
 
   try {
-      const currentClub = await Club.create({name, executiveId, imageURL})
+      const currentClub = await Club.create({name, executiveId, imageURL, des})
       await Follower.create({studentId:executiveId,clubId:currentClub.id, role:"leader"})
       return res.status(201).json({message: "Succesfully created new club, basarili"})
     } catch (error) {
@@ -206,12 +207,29 @@ async function getClubs(req,res){
   try {
     const allClubs = await Club.find({})
     return res.status(201).json(allClubs)
-} catch (error) {
+  } catch (error) {
     return res.status(400).json({message: "Could not fetch all clubs follower, basarisiz"})
+  }
 }
 
+
+async function getClub(req,res){
+  const {clubId} = req.body;
+  const userId = req.user.id;
+  if(!clubId){
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    const currentClub = await Club.findOne({_id: clubId})
+    if(!currentClub){
+      return res.status(404).json({'message': 'Club not found'})
+    }
+    return res.status(201).json(currentClub)
+  } catch (error) {
+    return res.status(400).json({message: "Could not fetch all clubs follower, basarisiz"})
+  }
 }
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
   getPostComments, updateComment, likePost, createClubPost, createClub, followClub,
-  getClubs
+  getClubs, getClub
 }

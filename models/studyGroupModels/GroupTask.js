@@ -18,7 +18,7 @@ const GroupTask = Schema(
         isFinished:{
             type: Boolean,
             required: false,
-            default: 0
+            default: false
         },
         date:{
             type: Date, 

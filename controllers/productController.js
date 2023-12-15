@@ -1,4 +1,5 @@
 const Product = require('../models/Product')
+const User = require('../models/User')
 
 
 async function createProduct(req, res){
@@ -19,10 +20,23 @@ async function createProduct(req, res){
 async function getProducts(req,res){
   try {
     results= await Product.find().sort({ date: -1 });
-    console.log(results);
+    
+    for (let i = 0; i < results.length; i++) {
+      const sellerid = results[i].sellerid;
+
+      // Satıcı adını alalım
+      const seller = await User.findOne({ _id: sellerid });
+
+      // Eğer satıcı bulunursa, ürünün sellerName özelliğine ekle
+      if (seller) {
+        console.log("seller: ",seller)
+        results[i] = results[i].toObject(); // MongoDB dökümanını plain JavaScript objesine dönüştür
+        results[i].sellerName = seller.username; // Satıcı adını ekle
+      }
+    } 
     return res.status(201).json(results)
   } catch (error) {
-    console.log("basarisiz");
+    console.log("basarisiz: ", error);
     return res.status(400).json({message: "Could not get product items"})
   }
 }

@@ -11,6 +11,10 @@ const Post = Schema(
             type: String,
             required: true
         },
+        publisherName:{
+            type: String,
+            required: true
+        },
         content:{
             type: String,
             required: true

@@ -25,4 +25,6 @@ router.post('/createClub', socialControllers.createClub)
 router.post('/followClub', socialControllers.followClub)
 
 router.get('/getClubs', socialControllers.getClubs)
+
+router.post('/getClub', socialControllers.getClub)
 module.exports = router

@@ -14,6 +14,7 @@ const GroupParticipation = Schema(
         role:{
             type: String,
             required: true,
+            default: "participant"
         },
         date:{
             type: Date, 

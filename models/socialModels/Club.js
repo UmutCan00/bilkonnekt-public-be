@@ -7,6 +7,10 @@ const Club = Schema(
             type: String,
             required: true
         },
+        description:{
+            type: String,
+            required: true
+        },
         executiveId:{
             type: String,
             required: false,

@@ -211,10 +211,13 @@ async function completeGroupTask(req, res){
             return res.status(422).json({'message': 'This task is not assigned to you'})
         }
         console.log(currenttask)
-        await GroupTask.findOneAndUpdate(
+        const finishedTask = await GroupTask.findOneAndUpdate(
             { _id: taskId},
             { $set: { isFinished: true } }
         );
+        if(!finishedTask){
+            return res.status(404).json({message: "task not found"})
+        }
         return res.status(201).json({message: "task completed success"})
     } catch (error) {
         console.log(error);
