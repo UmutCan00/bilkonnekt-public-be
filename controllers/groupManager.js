@@ -230,6 +230,17 @@ async function leaveStudyGroup(req, res){
         return res.status(400).json({message: "Could not leaved group, basarisiz"})
     } 
 }
-
+async function getAllGroups(req, res){
+    try {
+        const groupResults = await Group.find({});
+        return res.status(201).json(groupResults)
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({message: "Could not get all groups, basarisiz"})
+    } 
+}
 module.exports = {createStudyGroup,seeUserGroups,joinStudyGroup,seeGroupParticipants,promoteToLeader
-    , kickParticipant, applyToStudyGroup, assignGroupTask, seeGroupTasks, completeGroupTask, leaveStudyGroup}
+    , kickParticipant, applyToStudyGroup, assignGroupTask, seeGroupTasks, completeGroupTask, leaveStudyGroup,
+    getAllGroups
+
+}

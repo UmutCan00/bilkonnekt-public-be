@@ -25,4 +25,6 @@ router.post('/completeGroupTask', authMiddleware, groupControllers.completeGroup
 
 router.post('/leaveStudyGroup', authMiddleware, groupControllers.leaveStudyGroup)
 
+router.get('/getAllGroups', authMiddleware, groupControllers.getAllGroups)
+
 module.exports = router

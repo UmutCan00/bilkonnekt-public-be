@@ -17,4 +17,7 @@ router.post('/getPostComments', socialControllers.getPostComments)
 router.post('/updateComment', socialControllers.updateComment)
 
 router.post('/likePost', socialControllers.likePost)
+
+router.post('/createClubPost', socialControllers.createClubPost)
+
 module.exports = router

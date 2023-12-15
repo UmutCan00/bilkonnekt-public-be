@@ -1,6 +1,8 @@
 const SocialPost = require('../models/socialModels/SocialPost')
 const Comment = require('../models/socialModels/Comment')
 const Like = require('../models/socialModels/Like')
+const ClubPost = require('../models/socialModels/ClubPost')
+
 
 async function createSocialPost(req, res){
     const {title, content, imageURL} = req.body;
@@ -142,6 +144,24 @@ async function likePost(req,res){
     return res.status(400).json({message: "Could not like the post, basarisiz"})
   }
 }
+
+async function createClubPost(req, res){
+  const {title, content, imageURL, clubId} = req.body;
+  console.log("imageURL: ", imageURL)
+  const user = req.user;
+  const publisherId=user.id;
+  if( !title || !content || !imageURL || !publisherId || !clubId) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+
+  try {
+      await ClubPost.create({title, content, imageURL, publisherId, clubId})
+      return res.status(201).json({message: "Succesfully created new club post, basarili"})
+    } catch (error) {
+      return res.status(400).json({message: "Could not create new club post, basarisiz"})
+    }
+}
+
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
-  getPostComments, updateComment, likePost
+  getPostComments, updateComment, likePost, createClubPost
 }
