@@ -7,11 +7,15 @@ const Follower = require('../models/socialModels/Follower')
 
 
 async function createSocialPost(req, res){
-    const {title, content, imageURL} = req.body;
+    const {title, content, imageURL, isAnonymous} = req.body;
     console.log("imageURL: ", imageURL)
+    console.log("anonymous: ", isAnonymous)
     const user = req.user;
     const publisherId=user.id;
-    const publisherName = user.username;
+    let publisherName = user.username;
+    if(isAnonymous){
+      publisherName = "Anonymous";
+    }
     if( !title || !content || !imageURL || !publisherId|| !publisherName) {
         return res.status(422).json({'message': 'Invalid fields'})
     }
@@ -52,10 +56,14 @@ async function getSingleSocialPost(req, res){
 }
 
 async function createComment(req, res){
-  const {postId, description} = req.body;
+  const {postId, description, isAnonymous} = req.body;
   const user = req.user;
   const commenterId=user.id;
-  const commenterName = user.username;
+  let commenterName = user.username;
+  if(isAnonymous){
+    commenterName = "Anonymous";
+  }
+  console.log("commentAnon: ",commenterName);
   if( !postId || !description || !commenterId || !commenterName) {
       return res.status(422).json({'message': 'Invalid fields'})
   }

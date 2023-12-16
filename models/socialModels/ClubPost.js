@@ -24,15 +24,9 @@ const ClubPost = Schema(
             required: false,
             default: "none",
         },
-        likeCount:{
-            type: Number,
-            required: false,
-            default: 0,
-        },
-        commentCount:{
-            type: Number,
-            required: false,
-            default: 0,
+        eventDate:{
+            type:Date,
+            required:true
         },
         date:{
             type: Date, 
