@@ -237,7 +237,21 @@ async function getClub(req,res){
     return res.status(400).json({message: "Could not fetch all clubs follower, basarisiz"})
   }
 }
+
+async function getLikedPostsOfUser(req,res){
+  const userId = req.user.id;
+  if(!userId){
+    return res.status(422).json({'message': 'not authorized'})
+  }
+  try {
+    const likesOfUser = await Like.find({userId:userId, isActive:true})
+    return res.status(201).json(likesOfUser);
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({message: "Could not fetch all likes of user, basarisiz"})
+  }
+}
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
   getPostComments, updateComment, likePost, createClubPost, createClub, followClub,
-  getClubs, getClub
+  getClubs, getClub, getLikedPostsOfUser
 }

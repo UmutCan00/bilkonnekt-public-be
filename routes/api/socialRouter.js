@@ -26,5 +26,6 @@ router.post('/followClub', socialControllers.followClub)
 
 router.get('/getClubs', socialControllers.getClubs)
 
-router.post('/getClub', socialControllers.getClub)
+router.get('/getLikedPostsOfUser', authMiddleware, socialControllers.getLikedPostsOfUser);
+
 module.exports = router

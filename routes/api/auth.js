@@ -16,7 +16,7 @@ router.get('/user', authMiddleware, authControllers.user)
 
 router.post('/prereg', authControllers.prereg)
 
-router.post('/getProfile', authMiddleware, authControllers.getProfile)
+router.post('/getProfile', authControllers.getProfile)
 
 router.post('/deleteUser', authMiddleware, authControllers.deleteUser)
 
