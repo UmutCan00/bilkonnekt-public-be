@@ -28,4 +28,7 @@ router.get('/getClubs', socialControllers.getClubs)
 
 router.get('/getLikedPostsOfUser', authMiddleware, socialControllers.getLikedPostsOfUser);
 
+router.post('/updatePost', authMiddleware, socialControllers.updatePost);
+
+router.post('/deletePost', authMiddleware, socialControllers.deletePost);
 module.exports = router

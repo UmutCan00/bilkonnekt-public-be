@@ -55,6 +55,49 @@ async function getSingleSocialPost(req, res){
   }
 }
 
+async function updatePost(req, res){
+  const {postId, header, description} = req.body;
+  const userId = req.user.id;
+  if( !postId || !header || !userId ||!description) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    results= await SocialPost.findOne({_id:postId});
+    if(results.publisherId != userId){
+      return res.status(423).json({'message': 'Not post owner fields'})
+    }
+    await SocialPost.findOneAndUpdate(
+      { _id: postId},
+      { $set: { content: description,title: header} }
+    );
+    return res.status(201).json({message: "Update Post basarili"})
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({message: "Could not update post, basarisiz"})
+  }
+}
+
+async function deletePost(req, res){
+  const {postId} = req.body;
+  const userId = req.user.id;
+  if( !postId || !userId ) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    results= await SocialPost.findOne({_id:postId});
+    if (!results) {
+      return res.status(404).json({ 'message': 'Post not found' });
+    }
+    if(results.publisherId != userId){
+      return res.status(423).json({'message': 'Not post owner fields'})
+    }
+    await SocialPost.findOneAndRemove({ _id: postId });
+    return res.status(201).json({message: "Delete Post basarili"})
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({message: "Could not delete post, basarisiz"})
+  }
+}
 async function createComment(req, res){
   const {postId, description, isAnonymous} = req.body;
   const user = req.user;
@@ -253,5 +296,5 @@ async function getLikedPostsOfUser(req,res){
 }
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
   getPostComments, updateComment, likePost, createClubPost, createClub, followClub,
-  getClubs, getClub, getLikedPostsOfUser
+  getClubs, getClub, getLikedPostsOfUser, updatePost, deletePost
 }
