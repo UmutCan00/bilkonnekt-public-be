@@ -31,4 +31,6 @@ router.get('/getLikedPostsOfUser', authMiddleware, socialControllers.getLikedPos
 router.post('/updatePost', authMiddleware, socialControllers.updatePost);
 
 router.post('/deletePost', authMiddleware, socialControllers.deletePost);
+
+router.post('/deleteComment', authMiddleware, socialControllers.deleteComment);
 module.exports = router

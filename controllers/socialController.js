@@ -156,6 +156,28 @@ async function updateComment(req, res){
   }
 }
 
+async function deleteComment(req, res){
+  const {commentId} = req.body;
+  const userId = req.user.id;
+  if( !commentId || !userId) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    results= await Comment.findOne({_id:commentId});
+    if(!results){
+      return res.status(404).json({'message': 'Not comment found'})
+    }
+    if(results.commenterId != userId){
+      return res.status(423).json({'message': 'Not comment owner fields'})
+    }
+    await Comment.findOneAndRemove({ _id: commentId});
+    return res.status(201).json({message: "delete comment basarili"})
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({message: "Could not delete new social comment, basarisiz"})
+  }
+}
+
 async function likePost(req,res){
   const {postId} = req.body;
   const userId = req.user.id;
@@ -296,5 +318,5 @@ async function getLikedPostsOfUser(req,res){
 }
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
   getPostComments, updateComment, likePost, createClubPost, createClub, followClub,
-  getClubs, getClub, getLikedPostsOfUser, updatePost, deletePost
+  getClubs, getClub, getLikedPostsOfUser, updatePost, deletePost, deleteComment
 }
