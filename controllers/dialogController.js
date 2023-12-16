@@ -2,7 +2,7 @@ const Dialog = require('../models/Dialog')
 const Message = require('../models/Message')
 const User = require('../models/User')
 const Prod = require('../models/Product')
-
+const Contract = require('../models/Contract')
 
 
 async function createDialog(req,res){
@@ -61,4 +61,19 @@ async function getDialogsOfUser(req,res){
         return res.status(400).json({message: "Could not get user dialogs"})
     }
 }
-module.exports = {createDialog,getDialogMessage,getDialogsOfUser}
+
+async function createContract(req,res){
+    const {dialogId, returnLocation, returnDate} = req.body;
+    if(!dialogId){
+        return res.status(422).json({message: 'Invalid fields'})
+    }
+    try {
+        results= await Contract.create({dialogId, returnLocation, returnDate});
+        console.log(results);
+        return res.status(201).json({message: 'Contract create basarili'})
+    } catch (error) {
+        console.log("basarisiz");
+        return res.status(400).json({message: "Contract create basarisiz"})
+    }
+}
+module.exports = {createDialog,getDialogMessage,getDialogsOfUser,createContract}
