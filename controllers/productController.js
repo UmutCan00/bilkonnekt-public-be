@@ -3,16 +3,23 @@ const User = require('../models/User')
 
 
 async function createProduct(req, res){
-  const {title, price, address, type, description, imageURL} = req.body
+  let {title, price, address, type, description, imageURL, duration} = req.body
   const user = req.user;
-  if( !title || !price || !address || !type || !description || !imageURL) {
+  if( !title || !address || !type || !description || !imageURL) {
       return res.status(422).json({'message': 'Invalid fields'})
   }
 
   try {
-      await Product.create({sellerid: user.id, title, price, address, type, description, imageURL})
+      if(!duration || (type!="borrowing")){
+        duration = 0;
+      }
+      if(!price || (type!="selling")){
+        price = 0;
+      }
+      await Product.create({sellerid: user.id, title, price, address, type, description, imageURL, duration})
       return res.status(201).json({message: "Succesfully created new product, basarili"})
     } catch (error) {
+      console.log(error);
       return res.status(400).json({message: "Could not create new product, basarisiz"})
     }
 }

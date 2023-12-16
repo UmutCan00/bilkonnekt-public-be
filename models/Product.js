@@ -13,7 +13,13 @@ const Product = Schema(
         },
         price: {
             type: Number,
-            required: true,
+            required: false,
+            default:0
+        },
+        duration: {
+            type: Number,
+            required: false,
+            default:0
         },
         address:{
             type: String,
