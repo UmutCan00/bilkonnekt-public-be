@@ -23,7 +23,7 @@ const Contract = Schema(
             default: false,
         },
         isBuyerAccepted:{
-            type: String,
+            type: Boolean,
             required: false,
             default: false,
         },

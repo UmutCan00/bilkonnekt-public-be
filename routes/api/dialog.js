@@ -12,4 +12,7 @@ router.get('/getDialogsOfUser',authMiddleware, dialogControllers.getDialogsOfUse
 
 router.post('/createContract',authMiddleware, dialogControllers.createContract)
 
+router.post('/acceptContract',authMiddleware, dialogControllers.acceptContract)
+
+router.post('/getDialogContracts',authMiddleware, dialogControllers.getDialogContracts)
 module.exports = router
