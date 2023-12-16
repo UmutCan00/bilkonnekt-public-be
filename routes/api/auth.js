@@ -22,4 +22,6 @@ router.post('/deleteUser', authMiddleware, authControllers.deleteUser)
 
 router.post('/changePassword', authMiddleware, authControllers.changePassword)
 
+router.post('/updateImage', authMiddleware, authControllers.updateImage)
+
 module.exports = router

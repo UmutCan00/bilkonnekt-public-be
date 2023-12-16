@@ -115,8 +115,7 @@ async function logout(req, res){
 
 async function refresh(req, res){
   const cookies = req.cookies
-  if(!cookies.refresh_token) return res.sendStatus(401)
-
+  if(!cookies.refresh_token) return res.sendStatus(401).json({'message': 'middleware auth basarisiz'})
   const refreshToken = cookies.refresh_token
 
   const user = await User.findOne({refresh_token: refreshToken}).exec()
@@ -180,7 +179,7 @@ async function getProfile(req, res) {
   console.log("id: ", id)
   const user = await User.findOne({_id:id}).exec()
   if(!user)return res.status(422).json({'message': 'kullanici yok'})
-  res.json({username: user.username, email:user.email})
+  res.json({username: user.username, email:user.email, imageURL: user.imageURL})
 }
 
 
@@ -211,4 +210,21 @@ async function changePassword(req, res) {
   return res.sendStatus(201)
 }
 
-module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword}
+async function updateImage(req,res){
+  const {imageURL} = req.body;
+  const user = req.user;
+  if(!imageURL) {
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    await User.findOneAndUpdate(
+      { _id: user.id},
+      { $set: { imageURL: imageURL } }
+    );
+    return res.status(201).json({message: "update image basarili"})
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({message: "Could not update image"})
+  }
+}
+module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword, updateImage}
