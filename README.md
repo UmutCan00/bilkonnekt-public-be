@@ -162,7 +162,9 @@ Finally, finding project groups can be stressful for both project teams and peop
 
 • There will be a contact page where users can report bugs, offer new features, or just want to chat with developers.
 
-All Deliverables
+##All Deliverables
+
+
 D1 Report: https://docs.google.com/document/d/1FDboTgZHDA5s5uSj4zt_EAe77ft2TuBbFyoPZPPESM4/edit?usp=sharing 
 
 D2 Report: https://docs.google.com/document/d/1JhUtHMo-j2oQBeFjm7p9VvAvGDBWWUGp-cZDXrS84cc/edit?usp=sharing 
