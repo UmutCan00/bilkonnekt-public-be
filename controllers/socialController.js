@@ -223,18 +223,20 @@ async function likePost(req,res){
 }
 
 async function createClubPost(req, res){
-  const {title, content, imageURL, clubId} = req.body;
+  const {title, clubId,content, imageURL,location,date,hour,points} = req.body;
   console.log("imageURL: ", imageURL)
   const user = req.user;
   const publisherId=user.id;
-  if( !title || !content || !imageURL || !publisherId || !clubId) {
+  if( !title || !content || !imageURL || !publisherId || !clubId||!location||!date||!hour ||!points ) {
+      console.log(title ,",",content,"," ,imageURL,"," ,publisherId,"," ,clubId,",",location,",",date,",",hour,",", points)
       return res.status(422).json({'message': 'Invalid fields'})
   }
-
   try {
-      await ClubPost.create({title, content, imageURL, publisherId, clubId})
+    console.log(title ,",",content,"," ,imageURL,"," ,publisherId,"," ,clubId,",",location,",",date,",",hour,",", points)
+      await ClubPost.create({title, content, imageURL, publisherId, clubId,location,eventDate:date,eventhour:hour,points})
       return res.status(201).json({message: "Succesfully created new club post, basarili"})
     } catch (error) {
+      console.log(error)
       return res.status(400).json({message: "Could not create new club post, basarisiz"})
     }
 }
@@ -295,6 +297,7 @@ async function getClub(req,res){
   }
   try {
     const currentClub = await Club.findOne({_id: clubId})
+    console.log(currentClub);
     if(!currentClub){
       return res.status(404).json({'message': 'Club not found'})
     }
@@ -317,7 +320,57 @@ async function getLikedPostsOfUser(req,res){
     return res.status(400).json({message: "Could not fetch all likes of user, basarisiz"})
   }
 }
+
+async function updateClub(req,res){
+  const {clubId, description} = req.body;
+  if(!clubId||!description){
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    const currentClub = await Club.findOne({_id: clubId})
+    console.log(currentClub);
+    if(!currentClub){
+      return res.status(404).json({'message': 'Club not found'})
+    }
+    await Club.findOneAndUpdate(
+      { _id: clubId},
+      { $set: { description: description} }
+    );
+    return res.status(201).json({message: "update club, basarili"})
+  } catch (error) {
+    return res.status(400).json({message: "update club, basarisiz"})
+  }
+}
+
+async function getClubPostByClub(req,res){
+  const {clubId} = req.body;
+  if(!clubId){
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    const allClubPosts = await ClubPost.find({clubId:clubId})
+    return res.status(201).json(allClubPosts)
+  } catch (error) {
+    return res.status(400).json({message: "Could not fetch all clubs follower, basarisiz"})
+  }
+}
+
+async function getEventsToday(req,res){
+  try {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0); // Set time to midnight UTC
+
+    const allClubPostsToday = await ClubPost.find({
+      eventDate: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) },
+    });
+
+    return res.status(201).json(allClubPostsToday);
+  } catch (error) {
+    return res.status(400).json({ message: "Could not fetch all clubs follower, basarisiz" });
+  }
+}
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
   getPostComments, updateComment, likePost, createClubPost, createClub, followClub,
-  getClubs, getClub, getLikedPostsOfUser, updatePost, deletePost, deleteComment
+  getClubs, getClub, getLikedPostsOfUser, updatePost, deletePost, deleteComment,updateClub, getClubPostByClub,
+  getEventsToday
 }

@@ -24,6 +24,8 @@ router.post('/createClub', socialControllers.createClub)
 
 router.post('/followClub', socialControllers.followClub)
 
+router.post('/getClub', socialControllers.getClub)
+
 router.get('/getClubs', socialControllers.getClubs)
 
 router.get('/getLikedPostsOfUser', authMiddleware, socialControllers.getLikedPostsOfUser);
@@ -33,4 +35,10 @@ router.post('/updatePost', authMiddleware, socialControllers.updatePost);
 router.post('/deletePost', authMiddleware, socialControllers.deletePost);
 
 router.post('/deleteComment', authMiddleware, socialControllers.deleteComment);
+
+router.post('/updateClub', authMiddleware, socialControllers.updateClub);
+
+router.post('/getClubPostByClub', socialControllers.getClubPostByClub);
+
+router.get('/getEventsToday', socialControllers.getEventsToday);
 module.exports = router

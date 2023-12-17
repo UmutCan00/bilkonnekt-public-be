@@ -11,11 +11,11 @@ const ClubPost = Schema(
             type: String,
             required: true
         },
-        publisherId:{
+        content:{
             type: String,
             required: true
         },
-        content:{
+        location:{
             type: String,
             required: true
         },
@@ -26,6 +26,14 @@ const ClubPost = Schema(
         },
         eventDate:{
             type:Date,
+            required:true
+        },
+        eventhour:{
+            type:String,
+            required:true
+        },
+        points:{
+            type:Number,
             required:true
         },
         date:{
