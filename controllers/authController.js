@@ -51,6 +51,23 @@ async function register(req, res){
   }
 }
 
+async function forgotPassword(req,res){
+  const {email} = req.body
+  if(!email) {
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  hashedPassword = await bcrypt.hash("123", 10);
+  const forgotUser = await User.findOneAndUpdate(
+    { email: email },
+    { $set: { password: hashedPassword } },
+    { new: true }
+  );
+  await sendEmail(email, 'Bilkent Forum Project New Password', ("Your new code is password is 123 ."))
+  return res.sendStatus(201)
+
+}
+
+
 async function login(req, res){
   const {email, password } = req.body
 
@@ -329,5 +346,5 @@ async function handleTicket(req, res){
     }
 }
 module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword, updateImage, getUsers,updateRole,banStasusChange,
-  createTicket, getTickets, handleTicket
+  createTicket, getTickets, handleTicket, forgotPassword
 }

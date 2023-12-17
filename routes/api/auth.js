@@ -35,4 +35,6 @@ router.post('/createTicket', authMiddleware, authControllers.createTicket)
 router.get('/getTickets', authControllers.getTickets)
 
 router.post('/handleTicket', authControllers.handleTicket)
+
+router.post('/forgotPassword', authControllers.forgotPassword)
 module.exports = router
