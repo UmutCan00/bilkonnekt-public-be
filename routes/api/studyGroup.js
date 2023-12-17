@@ -27,4 +27,7 @@ router.post('/leaveStudyGroup', authMiddleware, groupControllers.leaveStudyGroup
 
 router.get('/getAllGroups', authMiddleware, groupControllers.getAllGroups)
 
+router.post('/createSectionChange', authMiddleware, groupControllers.createSectionChange)
+
+router.get('/getSWs', groupControllers.getSWs)
 module.exports = router

@@ -1,9 +1,9 @@
 const Group = require('../models/studyGroupModels/Group')
 const GroupApplication = require('../models/studyGroupModels/GroupApplication')
-const GroupAppplication = require('../models/studyGroupModels/GroupApplication')
 const GroupParticipation = require('../models/studyGroupModels/GroupParticipation')
 const GroupTask = require('../models/studyGroupModels/GroupTask')
 const User = require('../models/User')
+const SectionChange = require('../models/studyGroupModels/SectionChange')
 
 
 async function createStudyGroup(req, res){
@@ -253,8 +253,32 @@ async function getAllGroups(req, res){
         return res.status(400).json({message: "Could not get all groups, basarisiz"})
     } 
 }
+async function createSectionChange(req, res){
+    const {courseCode,currentSection,aimedSection } = req.body
+    const user = req.user;
+    const username = user.username
+    if( !currentSection || !aimedSection || !courseCode|| !username ) {
+        return res.status(422).json({'message': 'Invalid fields'})
+    }
+
+    try {
+        await SectionChange.create({courseCode, currentSection, aimedSection, userId:username})
+        return res.status(201).json({message: "Succesfully created new section change, basarili"})
+    } catch (error) {
+        return res.status(400).json({message: "Could not create new section change, basarisiz"})
+    }
+}
+
+async function getSWs(req, res){
+    try {
+        const SectionChanges = await SectionChange.find({})
+        return res.status(201).json(SectionChanges)
+    } catch (error) {
+        return res.status(400).json({message: "Could not get all section changes, basarisiz"})
+    }
+}
 module.exports = {createStudyGroup,seeUserGroups,joinStudyGroup,seeGroupParticipants,promoteToLeader
     , kickParticipant, applyToStudyGroup, assignGroupTask, seeGroupTasks, completeGroupTask, leaveStudyGroup,
-    getAllGroups
+    getAllGroups, createSectionChange, getSWs
 
 }
