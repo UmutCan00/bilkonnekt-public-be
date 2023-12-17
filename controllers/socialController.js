@@ -4,7 +4,8 @@ const Like = require('../models/socialModels/Like')
 const ClubPost = require('../models/socialModels/ClubPost')
 const Club = require('../models/socialModels/Club')
 const Follower = require('../models/socialModels/Follower')
-
+const nodemailer = require('nodemailer');
+const User = require('../models/User');
 
 async function createSocialPost(req, res){
     const {title, content, imageURL, isAnonymous} = req.body;
@@ -234,6 +235,18 @@ async function createClubPost(req, res){
   try {
     console.log(title ,",",content,"," ,imageURL,"," ,publisherId,"," ,clubId,",",location,",",date,",",hour,",", points)
       await ClubPost.create({title, content, imageURL, publisherId, clubId,location,eventDate:date,eventhour:hour,points})
+      const followers = await Follower.find({clubId: clubId});
+      const studentIds = followers.map((follower) => follower.studentId);
+
+      const userEmails = await Promise.all(studentIds.map(async (studentId) => {
+        const user = await User.findOne({ _id: studentId });
+        return user ? user.email : null;
+      }));
+      //await sendEmails(userEmails) //buggy
+      
+
+      console.log("User Emails:", userEmails);
+
       return res.status(201).json({message: "Succesfully created new club post, basarili"})
     } catch (error) {
       console.log(error)
@@ -241,6 +254,60 @@ async function createClubPost(req, res){
     }
 }
 
+async function sendEmail(to, subject, text) {
+  const transporter = nodemailer.createTransport({
+    service: 'hotmail', 
+    auth: {
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD,
+    },
+    pool: true,
+    maxConnections: 10,
+  });
+
+  const mailOptions = {
+    from: 'bilkent.forum.project@hotmail.com',
+    to,
+    subject,
+    text,
+  };
+
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await transporter.sendMail(mailOptions);
+    console.log('E-posta gönderildi.');
+  } catch (error) {
+    console.error('E-posta gönderilirken hata oluştu:', error);
+  }
+}
+
+const MAX_CONCURRENT_EMAILS = 10;
+
+async function sendEmails(emailAddresses) {
+  const transporter = nodemailer.createTransport({
+    service: 'hotmail',
+    auth: {
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD,
+    },
+    pool: true,
+    maxConnections: MAX_CONCURRENT_EMAILS,
+  });
+
+  const emailPromises = emailAddresses.map(async (email) => {
+    while (transporter.transporter.sockets.size >= MAX_CONCURRENT_EMAILS) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    try {
+      await sendEmail(email, 'Club Post Notification', 'New club post announced!');
+    } catch (error) {
+      console.error('Email sending failed:', error);
+    }
+  });
+
+  await Promise.all(emailPromises);
+}
 async function createClub(req, res){
   let {name, imageURL, executiveId, description} = req.body;
   console.log("imageURL: ", imageURL)
@@ -372,8 +439,11 @@ async function getEventsToday(req,res){
     return res.status(400).json({ message: "Could not fetch all clubs follower, basarisiz" });
   }
 }
+
+
 module.exports = {createSocialPost,getSocialPosts,getSingleSocialPost,createComment,
   getPostComments, updateComment, likePost, createClubPost, createClub, followClub,
   getClubs, getClub, getLikedPostsOfUser, updatePost, deletePost, deleteComment,updateClub, getClubPostByClub,
   getEventsToday
 }
+
