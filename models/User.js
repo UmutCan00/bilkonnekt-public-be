@@ -8,7 +8,16 @@ const UserSchema = Schema(
       type: String,
       required: true
     },
-
+    role:{
+      type: String,
+      required: false,
+      default:"student"
+    },
+    isBanned:{
+      type: Boolean,
+      required: false,
+      default: false
+    },
     email:{
       type: String,
       required: true,

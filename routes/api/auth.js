@@ -24,4 +24,9 @@ router.post('/changePassword', authMiddleware, authControllers.changePassword)
 
 router.post('/updateImage', authMiddleware, authControllers.updateImage)
 
+router.get('/getUsers', authMiddleware, authControllers.getUsers)
+
+router.post('/updateRole', authMiddleware, authControllers.updateRole)
+
+router.post('/banStasusChange', authMiddleware, authControllers.banStasusChange)
 module.exports = router

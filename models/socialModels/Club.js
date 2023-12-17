@@ -19,7 +19,7 @@ const Club = Schema(
         imageURL:{
             type: String,
             required: false,
-            default: "none",
+            default: "https://firebasestorage.googleapis.com/v0/b/bilkonnekt-ef5da.appspot.com/o/images%2Fpppng.png1c618d29-fbbe-4ace-bfc7-f6b7ad7e0909?alt=media&token=6e649dcb-0451-46d9-96a1-61931df93f94",
         },
         date:{
             type: Date, 

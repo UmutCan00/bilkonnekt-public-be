@@ -79,6 +79,7 @@ async function updatePost(req, res){
 
 async function deletePost(req, res){
   const {postId} = req.body;
+  const user = req.user;
   const userId = req.user.id;
   if( !postId || !userId ) {
       return res.status(422).json({'message': 'Invalid fields'})
@@ -88,7 +89,7 @@ async function deletePost(req, res){
     if (!results) {
       return res.status(404).json({ 'message': 'Post not found' });
     }
-    if(results.publisherId != userId){
+    if((results.publisherId != userId)&&(user.role != "Admin")){
       return res.status(423).json({'message': 'Not post owner fields'})
     }
     await SocialPost.findOneAndRemove({ _id: postId });

@@ -62,6 +62,7 @@ async function getProductsByUserId(req,res){
 
 async function deleteProduct(req,res){
   const {productId} = req.body
+  const user = req.user;
   const userId = req.user.id;
   if( !productId || !userId) {
       return res.status(422).json({'message': 'Invalid fields'})
@@ -72,7 +73,7 @@ async function deleteProduct(req,res){
       if(!item){
         return res.status(404).json({'message': 'Product not found'})
       }
-      if(item.sellerid != userId){
+      if((item.sellerid != userId) && user.role!="Admin"){
         return res.status(400).json({'message': 'You are not allowed to do this operation'})
       }
 

@@ -176,10 +176,15 @@ async function sendEmail(to, subject, text) {
 async function getProfile(req, res) {
   const {id} = req.body
   if(!id) return res.status(422).json({'message': 'id göndermedin'})
-  console.log("id: ", id)
-  const user = await User.findOne({_id:id}).exec()
-  if(!user)return res.status(422).json({'message': 'kullanici yok'})
-  res.json({username: user.username, email:user.email, imageURL: user.imageURL})
+  try {
+    console.log("id: ", id)
+    const user = await User.findOne({_id:id}).exec()
+    if(!user)return res.status(422).json({'message': 'kullanici yok'})
+    res.json({username: user.username, email:user.email, imageURL: user.imageURL})
+  } catch (error) {
+    console.log(error)
+    if(!user)return res.status(404).json({'message': 'kullanici yok'})
+  }
 }
 
 
@@ -227,4 +232,54 @@ async function updateImage(req,res){
     return res.status(400).json({message: "Could not update image"})
   }
 }
-module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword, updateImage}
+async function getUsers(req,res){
+  const user = req.user;
+  try {
+    const users = await User.find({});
+    console.log(users)
+    return res.status(201).json(users)
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({message: "Could not get users"})
+  }
+}
+
+async function updateRole(req,res){
+  const {role, studentId} = req.body;
+  const user = req.user;
+  if(!role || !studentId) {
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    const users = await User.findOneAndUpdate(
+      { _id: studentId},
+      { $set: { role: role } }
+    );
+
+    return res.status(201).json({message: "update basarili"})
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({message: "Could not get users"})
+  }
+}
+
+async function banStasusChange(req,res){
+  const {studentId} = req.body;
+  if(!studentId) {
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+    const currentUser = await User.findOne({ _id: studentId});
+    const newBanStatus = !currentUser.isBanned;
+    const users = await User.findOneAndUpdate(
+      { _id: studentId},
+      { $set: { isBanned: newBanStatus } }
+    );
+
+    return res.status(201).json({message: "ban change basarili"})
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({message: "Could not ban change"})
+  }
+}
+module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword, updateImage, getUsers,updateRole,banStasusChange}
