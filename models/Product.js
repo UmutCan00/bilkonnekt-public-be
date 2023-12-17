@@ -11,6 +11,11 @@ const Product = Schema(
             type: String,
             required: true
         },
+        sellerName:{
+            type: String,
+            required: false,
+            default:"BilkonnektUser"
+        },
         price: {
             type: Number,
             required: false,

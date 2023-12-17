@@ -5,6 +5,7 @@ const User = require('../models/User')
 async function createProduct(req, res){
   let {title, price, address, type, description, imageURL, duration} = req.body
   const user = req.user;
+  const sellerName = user.username;
   if( !title || !address || !type || !description || !imageURL) {
       return res.status(422).json({'message': 'Invalid fields'})
   }
@@ -16,7 +17,7 @@ async function createProduct(req, res){
       if(!price || (type!="selling")){
         price = 0;
       }
-      await Product.create({sellerid: user.id, title, price, address, type, description, imageURL, duration})
+      await Product.create({sellerid: user.id, title, price, address, type, description, imageURL, duration,sellerName})
       return res.status(201).json({message: "Succesfully created new product, basarili"})
     } catch (error) {
       console.log(error);
