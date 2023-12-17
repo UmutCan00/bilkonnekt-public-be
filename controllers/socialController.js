@@ -242,19 +242,22 @@ async function createClubPost(req, res){
 }
 
 async function createClub(req, res){
-  const {name, imageURL, executiveId, description} = req.body;
+  let {name, imageURL, executiveId, description} = req.body;
   console.log("imageURL: ", imageURL)
   const user = req.user;
-  const adminId=user.id; // needs an admin check 
+  if(!imageURL || imageURL ==undefined){
+    imageURL ="https://firebasestorage.googleapis.com/v0/b/bilkonnekt-ef5da.appspot.com/o/images%2Fpppng.png1c618d29-fbbe-4ace-bfc7-f6b7ad7e0909?alt=media&token=6e649dcb-0451-46d9-96a1-61931df93f94" 
+  } 
   if( !name || !imageURL || !executiveId || !description) {
       return res.status(422).json({'message': 'Invalid fields'})
   }
 
   try {
-      const currentClub = await Club.create({name, executiveId, imageURL, des})
+      const currentClub = await Club.create({name, executiveId, imageURL, description})
       await Follower.create({studentId:executiveId,clubId:currentClub.id, role:"leader"})
       return res.status(201).json({message: "Succesfully created new club, basarili"})
     } catch (error) {
+      console.log( "error: ", error)
       return res.status(400).json({message: "Could not create new club, basarisiz"})
     }
 }

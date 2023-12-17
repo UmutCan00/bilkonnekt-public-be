@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
 const VerificationObject = require('../models/Verification')
-
+const Ticket = require('../models/Ticket')
 
 async function prereg(req,res){
   const {user_email}=req.body;
@@ -282,4 +282,52 @@ async function banStasusChange(req,res){
     return res.status(400).json({message: "Could not ban change"})
   }
 }
-module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword, updateImage, getUsers,updateRole,banStasusChange}
+
+async function createTicket(req, res){
+  let {message} = req.body
+  const user = req.user;
+  const senderName = user.username;
+  const senderId = user.id;
+  if( !senderName || !senderId || !message) {
+      return res.status(422).json({'message': 'Invalid fields'})
+  }
+
+  try {
+      await Ticket.create({message, senderName, senderId})
+      return res.status(201).json({message: "Succesfully created new ticket, basarili"})
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({message: "Could not create new ticket, basarisiz"})
+    }
+}
+
+async function getTickets(req, res){
+  try {
+      const allTickets = await Ticket.find({isResponded:false})
+      return res.status(201).json(allTickets);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({message: "Could not get all tickets, basarisiz"})
+    }
+}
+
+async function handleTicket(req, res){
+  const {ticketId} = req.body
+  if( !ticketId) {
+    return res.status(422).json({'message': 'Invalid fields'})
+  }
+  try {
+      await Ticket.findOne({ _id: ticketId})
+      await Ticket.findOneAndUpdate(
+        { _id: ticketId},
+        { $set: { isResponded: true } }
+      );
+      return res.status(201).json({message: "ticket handle, basarili"});
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({message: "Could not get all tickets, basarisiz"})
+    }
+}
+module.exports = {register, login, logout, refresh, user, prereg, getProfile, deleteUser,changePassword, updateImage, getUsers,updateRole,banStasusChange,
+  createTicket, getTickets, handleTicket
+}

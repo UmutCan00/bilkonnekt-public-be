@@ -29,4 +29,10 @@ router.get('/getUsers', authMiddleware, authControllers.getUsers)
 router.post('/updateRole', authMiddleware, authControllers.updateRole)
 
 router.post('/banStasusChange', authMiddleware, authControllers.banStasusChange)
+
+router.post('/createTicket', authMiddleware, authControllers.createTicket)
+
+router.get('/getTickets', authControllers.getTickets)
+
+router.post('/handleTicket', authControllers.handleTicket)
 module.exports = router
