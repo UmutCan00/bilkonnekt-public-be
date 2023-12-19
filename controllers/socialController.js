@@ -242,7 +242,9 @@ async function createClubPost(req, res){
         const user = await User.findOne({ _id: studentId });
         return user ? user.email : null;
       }));
-      //await sendEmails(userEmails) //buggy
+
+      const mailerClub = await Club.findOne({_id:clubId});
+      await sendEmails(userEmails, title, mailerClub.name);
       
 
       console.log("User Emails:", userEmails);
@@ -283,8 +285,10 @@ async function sendEmail(to, subject, text) {
 
 const MAX_CONCURRENT_EMAILS = 10;
 
-async function sendEmails(emailAddresses) {
+async function sendEmails(emailAddresses, title, clubName) {
   const transporter = nodemailer.createTransport({
+    sendmail: true,
+    newline: 'unix',
     service: 'hotmail',
     auth: {
       user: process.env.MAIL_USERNAME,
@@ -292,18 +296,20 @@ async function sendEmails(emailAddresses) {
     },
     pool: true,
     maxConnections: MAX_CONCURRENT_EMAILS,
-  });
+  }); 
+  const mailSubject = (clubName+ ' Club Event');
+  const mailText = ('You are invited to join ' + title); 
+  let mailOptions = { from: 'bilkent.forum.project@hotmail.com', 
+    to: emailAddresses, 
+    subject: mailSubject, 
+    text: mailText};
 
-  const emailPromises = emailAddresses.map(async (email) => {
-    while (transporter.transporter.sockets.size >= MAX_CONCURRENT_EMAILS) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    try {
-      await sendEmail(email, 'Club Post Notification', 'New club post announced!');
-    } catch (error) {
-      console.error('Email sending failed:', error);
-    }
+    transporter.sendMail(mailOptions, function(error, info){ 
+    if (error) {
+      console.log(error); 
+    }else{ 
+      console.log('Email sent: ' + info.response); 
+    } 
   });
 
   await Promise.all(emailPromises);
